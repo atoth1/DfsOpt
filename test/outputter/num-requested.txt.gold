@@ -1,0 +1,34 @@
+dfs-opt produced the following 2 lineups after 0.5 seconds of solution time.
+
+----------------------------------------------------------------------------------------------------
+
+Lineup #1:          Expected Points = 6.0                   Lineup Cost = 6               
+QBs:                            Team                 Expected Points                Cost
+  A                             A                                1.0                   1
+RBs:                            
+  B                             B                                1.0                   1
+WRs:                            
+  C                             C                                1.0                   1
+TEs:                            
+  D                             D                                1.0                   1
+FLEX:                           
+  E                             E                                1.0                   1
+DST:
+  F                                                              1.0                   1
+
+----------------------------------------------------------------------------------------------------
+
+Lineup #2:          Expected Points = 6.0                   Lineup Cost = 6               
+QBs:                            Team                 Expected Points                Cost
+  G                             G                                1.0                   1
+RBs:                            
+  G                             G                                1.0                   1
+WRs:                            
+  I                             I                                1.0                   1
+TEs:                            
+  J                             J                                1.0                   1
+FLEX:                           
+  K                             K                                1.0                   1
+DST:
+  L                                                              1.0                   1
+

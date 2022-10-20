@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Small sample input for Week 7 main slate of 2022 NFL season. Salaries -->
+<!-- taken from DraftKings and expected points from Yahoo PPR projections. -->
+
+<data>
+
+  <requirements>
+    <budget>50000</budget>
+    <num_qbs>1</num_qbs>
+    <num_rbs>2</num_rbs>
+    <num_wrs>3</num_wrs>
+    <num_tes>1</num_tes>
+    <num_flex>1</num_flex>
+    <num_dsts>1</num_dsts>
+  </requirements>
+
+  <qbs>
+    <player name="Lamar Jackson" team="BAL" cost="8000" pts="23.0" />
+    <player name="Justin Herbert" team="LAC" cost="7200" pts="22.9" />
+    <player name="Joe Burrow" team="CIN" cost="6900" pts="23.2" />
+    <player name="Tom Brady" team="TB" cost="6300" pts="21.0" />
+    <player name="Trevor Lawrence" team="JAX" cost="5700" pts="17.4" />
+    <player name="Matt Ryan" team="IND" cost="5400" pts="15.7" />
+  </qbs>
+
+  <rbs>
+    <player name="Austin Ekeler" team="LAC" cost="8300" pts="22.2" />
+    <player name="Saquon Barkley" team="NYG" cost="7900" pts="21.7" />
+    <player name="Christian Mccaffrey" team="CAR" cost="8400" pts="19.2" />
+    <player name="Derrick Henry" team="TEN" cost="8200" pts="17.9" />
+    <player name="Nick Chubb" team="CLE" cost="8000" pts="18.2" />
+    <player name="Josh Jacobs" team="LV" cost="6500" pts="17.9" />
+    <player name="Leonard Fournette" team="TB" cost="7700" pts="17.5" />
+    <player name="Deandre Swift" team="DET" cost="6800" pts="17.1" />
+    <player name="Breece Hall" team="NYJ" cost="6200" pts="15.8" />
+    <player name="Ken Walker" team="SEA" cost="5800" pts="15.6" />
+    <player name="Dameon Pierce" team="HOU" cost="6400" pts="15.3" />
+    <player name="Tony Pollard" team="DAL" cost="5700" pts="13.5" />
+    <player name="Travis Etienne" team="JAX" cost="5400" pts="11.0" />
+    <player name="Tyler Allgeier" team="ATL" cost="5000" pts="9.2" />
+    <player name="Michael Carter" team="NYJ" cost="4800" pts="9.1" />
+  </rbs>
+
+  <wrs>
+    <player name="Davante Adams" team="LV" cost="8700" pts="20.7" />
+    <player name="CeeDee Lamb" team="DAL" cost="6800" pts="19.8" />
+    <player name="Deebo Samuel" team="SF" cost="7600" pts="16.4" />
+    <player name="Mike Evans" team="TB" cost="6900" pts="16.3" />
+    <player name="Tee Higgins" team="CIN" cost="6400" pts="15.7" />
+    <player name="JuJu Smith-Schuster" team="KC" cost="5600" pts="12.9" />
+    <player name="Christian Kirk" team="JAX" cost="5900" pts="12.2" />
+    <player name="Courtland Sutton" team="DEN" cost="6200" pts="13.0" />
+    <player name="Drake London" team="ATL" cost="5400" pts="12.1" />
+    <player name="Tyler Lockett" team="SEA" cost="5800" pts="12.0" />
+    <player name="Alec Pierce" team="IND" cost="4600" pts="10.2" />
+    <player name="Michael Gallup" team="DAL" cost="5100" pts="10.9" />
+    <player name="Zay Jones" team="JAX" cost="4400" pts="9.0" />
+    <player name="Jahan Dotson" team="WAS" cost="4200" pts="7.6" />
+    <player name="Devin Duvernay" team="BAL" cost="4500" pts="10.8" />
+  </wrs>
+
+  <tes>
+    <player name="Travis Kelce" team="KC" cost="8000" pts="18.0" />
+    <player name="Mark Andrews" team="BAL" cost="7400" pts="17.8" />
+    <player name="George Kittle" team="SF" cost="5300" pts="11.5" />
+    <player name="David Njoku" team="CLE" cost="4200" pts="10.0" />
+    <player name="Evan Engram" team="JAX" cost="3300" pts="8.1" />
+  </tes>
+
+  <dsts>
+    <dst team="TB" cost="3900" pts="13.4" />
+    <dst team="LV" cost="3300" pts="13.0" />
+    <dst team="JAX" cost="3100" pts="7.3" />
+    <dst team="NYJ" cost="2900" pts="6.3" />
+    <dst team="CAR" cost="2200" pts="5.6" />
+  </dsts>
+
+</data>
