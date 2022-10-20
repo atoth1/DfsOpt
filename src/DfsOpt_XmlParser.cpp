@@ -27,7 +27,7 @@ DfsOpt::InputData DfsOpt::XmlParser::parse(const std::string_view inFile) {
     return std::stod(str.raw());
   };
 
-  auto parseReqs = [&](const xmlpp::Node* node, InputData& data) {
+  auto parseRequirements = [&](const xmlpp::Node* node, InputData& data) {
     for (const auto* child : node->get_children()) {
       const auto* elem = dynamic_cast<const xmlpp::Element*>(child);
       if (elem) {
@@ -45,6 +45,36 @@ DfsOpt::InputData DfsOpt::XmlParser::parse(const std::string_view inFile) {
           data.numFlex_ = toInt(elem->get_child_text()->get_content());
         } else if (elem->get_name() == "num_dsts") {
           data.numDsts_ = toInt(elem->get_child_text()->get_content());
+        }
+      }
+    }
+  };
+
+  auto parseRequiredPlayers = [&](const xmlpp::Node* node, InputData& data) {
+    for (const auto* child : node->get_children()) {
+      const auto* elem = dynamic_cast<const xmlpp::Element*>(child);
+      if (elem) {
+        if (elem->get_name() == "required-player") {
+          Player player{};
+          player.name_ = elem->get_attribute("name")->get_value();
+          player.team_ = elem->get_attribute("team")->get_value();
+          player.salary_ = toInt(elem->get_attribute("cost")->get_value());
+          player.expectedPts_ = toDouble(elem->get_attribute("pts")->get_value());
+          if (elem->get_attribute("pos")->get_value() == "QB") {
+            data.reqQbs_.push_back(player);
+          } else if (elem->get_attribute("pos")->get_value() == "RB") {
+            data.reqRbs_.push_back(player);
+          } else if (elem->get_attribute("pos")->get_value() == "WR") {
+            data.reqWrs_.push_back(player);
+          } else if (elem->get_attribute("pos")->get_value() == "TE") {
+            data.reqTes_.push_back(player);
+          }
+        } else if (elem->get_name() == "required-dst") {
+          Dst dst{};
+          dst.team_ = elem->get_attribute("team")->get_value();
+          dst.salary_ = toInt(elem->get_attribute("cost")->get_value());
+          dst.expectedPts_ = toDouble(elem->get_attribute("pts")->get_value());
+          data.reqDsts_.push_back(dst);
         }
       }
     }
@@ -81,7 +111,9 @@ DfsOpt::InputData DfsOpt::XmlParser::parse(const std::string_view inFile) {
   const auto* root = inputParser.get_document()->get_root_node();
   for (const auto* node : root->get_children()) {
     if (node->get_name() == "requirements") {
-      parseReqs(node, data);
+      parseRequirements(node, data);
+    } else if (node->get_name() == "required") {
+      parseRequiredPlayers(node, data);
     } else if (node->get_name() == "qbs") {
       parsePlayers(node, data.qbs_);
     } else if (node->get_name() == "rbs") {
@@ -99,24 +131,56 @@ DfsOpt::InputData DfsOpt::XmlParser::parse(const std::string_view inFile) {
   if (data.qbs_.size() < data.numQbs_) {
     throw std::runtime_error("ERROR: Not enough QBs provided.");
   }
-    if (data.rbs_.size() < data.numRbs_) {
+  if (data.rbs_.size() < data.numRbs_) {
     throw std::runtime_error("ERROR: Not enough RBs provided.");
   }
-    if (data.wrs_.size() < data.numWrs_) {
+  if (data.wrs_.size() < data.numWrs_) {
     throw std::runtime_error("ERROR: Not enough WRs provided.");
   }
-    if (data.tes_.size() < data.numTes_) {
+  if (data.tes_.size() < data.numTes_) {
     throw std::runtime_error("ERROR: Not enough TEs provided.");
   }
-    if (data.rbs_.size() + data.wrs_.size() + data.tes_.size() <
+  if (data.rbs_.size() + data.wrs_.size() + data.tes_.size() <
       data.numRbs_ + data.numWrs_ + data.numTes_ + data.numFlex_) {
-    throw std::runtime_error("ERROR: Not enough flex eligible players provided.");
+    throw std::runtime_error("ERROR: Not enough flex eligible-players provided.");
   }
-    if (data.dsts_.size() < data.numDsts_) {
+  if (data.dsts_.size() < data.numDsts_) {
     throw std::runtime_error("ERROR: Not enough DSTs provided.");
   }
+  if (data.reqQbs_.size() > data.numQbs_) {
+    throw std::runtime_error("ERROR: Too many required QBs specified");
+  }
+  if (data.reqRbs_.size() > data.numRbs_ + data.numFlex_) {
+    throw std::runtime_error("ERROR: Too many required RBs specified");
+  }
+  if (data.reqWrs_.size() > data.numWrs_ + data.numFlex_) {
+    throw std::runtime_error("ERROR: Too many required WRs specified");
+  }
+  if (data.reqTes_.size() > data.numTes_ + data.numFlex_) {
+    throw std::runtime_error("ERROR: Too many required TEs specified");
+  }
+  int flexRbs = std::max<int>(0, data.reqRbs_.size() - data.numRbs_);
+  int flexWrs = std::max<int>(0, data.reqWrs_.size() - data.numWrs_);
+  int flexTes = std::max<int>(0, data.reqTes_.size() - data.numTes_);
+  if (flexRbs + flexWrs + flexTes >  data.numFlex_) {
+    throw std::runtime_error("ERROR: Too many required flex-eligible players specified");
+  }
+  if (data.reqDsts_.size() > data.numDsts_) {
+    throw std::runtime_error("ERROR: Too many required DSTs specified");
+  }
 
-  // Sort ascending by cost  to aid backtracking solution algorithm
+  auto eraseRequired = [](auto& candidates, const auto& required) {
+    candidates.erase(std::remove_if(candidates.begin(), candidates.end(), [&](const auto& player) {
+      return std::find(required.begin(), required.end(), player) != required.end();
+    }), candidates.end());
+  };
+  eraseRequired(data.qbs_, data.reqQbs_);
+  eraseRequired(data.rbs_, data.reqRbs_);
+  eraseRequired(data.wrs_, data.reqWrs_);
+  eraseRequired(data.tes_, data.reqTes_);
+  eraseRequired(data.dsts_, data.reqDsts_);
+
+  // Sort ascending by cost to aid backtracking solution algorithm
   auto comp = [](const auto& l, const auto& r) {
     return l.salary_ < r.salary_;
   };
@@ -162,6 +226,40 @@ std::string_view DfsOpt::XmlParser::schemaString() {
   </xs:sequence>
 </xs:complexType>
 
+<xs:simpleType name="positionString">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="QB"/>
+    <xs:enumeration value="RB"/>
+    <xs:enumeration value="WR"/>
+    <xs:enumeration value="TE"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="requiredPlayerType">
+  <xs:attribute name="name" type="stringType" use="required"/>
+  <xs:attribute name="pos" type="positionString" use="required" />
+  <xs:attribute name="team" type="stringType" use="required"/>
+  <xs:attribute name="cost" type="intType" use="required"/>
+  <xs:attribute name="pts" type="decType" use="required"/>
+</xs:complexType>
+
+<xs:complexType name="requiredDstType">
+  <xs:attribute name="team" type="stringType" use="required"/>
+  <xs:attribute name="cost" type="intType" use="required"/>
+  <xs:attribute name="pts" type="decType" use="required"/>
+</xs:complexType>
+
+<xs:complexType name="requiredListType">
+  <xs:sequence>
+    <xs:sequence>
+      <xs:element name="required-player" minOccurs="0" maxOccurs="unbounded" type="requiredPlayerType"/>
+    </xs:sequence>
+    <xs:sequence>
+      <xs:element name="required-dst" minOccurs="0" maxOccurs="unbounded" type="requiredDstType"/>
+    </xs:sequence>
+  </xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="playerType">
   <xs:attribute name="name" type="stringType" use="required"/>
   <xs:attribute name="team" type="stringType" use="required"/>
@@ -190,6 +288,7 @@ std::string_view DfsOpt::XmlParser::schemaString() {
 <xs:complexType name="dataType">
   <xs:sequence>
     <xs:element name="requirements" minOccurs="1" maxOccurs="1" type="requirementsType"/>
+    <xs:element name="required" minOccurs="0" maxOccurs="1" type="requiredListType" />
     <xs:element name="qbs" minOccurs="0" maxOccurs="1" type="playerListType"/>
     <xs:element name="rbs" minOccurs="0" maxOccurs="1" type="playerListType"/>
     <xs:element name="wrs" minOccurs="0" maxOccurs="1" type="playerListType"/>
