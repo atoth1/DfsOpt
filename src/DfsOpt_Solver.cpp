@@ -2,6 +2,7 @@
 #include "DfsOpt_Solver.hpp"
 
 #include <algorithm>
+#include <stdexcept>
 #include <set>
 #include <utility>
 
@@ -244,13 +245,69 @@ namespace {
 
 DfsOpt::OutputData DfsOpt::Solver::solve(
   const int nLineups,
-  const DfsOpt::InputData& data
+  DfsOpt::InputData& data
 ) {
+  int reqCost = 0;
+  double reqPts = 0.;
+  std::vector<DfsOpt::Player> reqFlex{};
+  auto updateForRequired = [&](std::vector<DfsOpt::Player>& container, int& startingCount) {
+    int flexed = 0;
+    for (const auto& player : container) {
+      if (startingCount > 0) {
+        --startingCount;
+      } else {
+        // Parser checks that required qb count < starting qb count, so this can only be rb/wr/te.
+        ++flexed;
+        --data.numFlex_;
+        reqFlex.push_back(player);
+      }
+      data.budget_ -= player.salary_;
+      reqCost += player.salary_;
+      reqPts += player.expectedPts_;
+    }
+    for (int i = 0; i < flexed; ++i) container.pop_back();
+  };
+  auto updateForRequiredDst = [&]() {
+    for (const auto& dst : data.reqDsts_) {
+      --data.numDsts_;
+      data.budget_ -= dst.salary_;
+      reqCost += dst.salary_;
+      reqPts += dst.expectedPts_;
+    }
+  };
+  updateForRequired(data.reqQbs_, data.numQbs_);
+  updateForRequired(data.reqRbs_, data.numRbs_);
+  updateForRequired(data.reqWrs_, data.numWrs_);
+  updateForRequired(data.reqTes_, data.numTes_);
+  updateForRequiredDst();
+  if (data.budget_ < 0) {
+    throw std::runtime_error("ERROR: Salaries for required players already exceeds allowed budget.");
+  }
+
   DfsOpt::OutputData ret{};
   ret.rosters_.reserve(nLineups);
   Roster candidate{};
   std::vector<int> qbIds{}, rbIds{}, wrIds{}, teIds{}, dstIds{};
   impl(data, nLineups, 0, PosStatus::QB, candidate, qbIds, rbIds, wrIds, teIds, dstIds, ret.rosters_);
+
+  auto addRequired = [&](
+    DfsOpt::Roster& roster,
+    const DfsOpt::InputData& data,
+    const std::vector<DfsOpt::Player>& reqFlex
+  ) {
+    roster.cost_ += reqCost;
+    roster.expectedPts_ += reqPts;
+    roster.qbs_.insert(roster.qbs_.cend(), data.reqQbs_.cbegin(), data.reqQbs_.cend());
+    roster.rbs_.insert(roster.rbs_.cend(), data.reqRbs_.cbegin(), data.reqRbs_.cend());
+    roster.wrs_.insert(roster.wrs_.cend(), data.reqWrs_.cbegin(), data.reqWrs_.cend());
+    roster.tes_.insert(roster.tes_.cend(), data.reqTes_.cbegin(), data.reqTes_.cend());
+    roster.flex_.insert(roster.flex_.cend(), reqFlex.cbegin(), reqFlex.cend());
+    roster.dsts_.insert(roster.dsts_.cend(), data.reqDsts_.cbegin(), data.reqDsts_.cend());
+  };
+  for (auto& roster : ret.rosters_) {
+    addRequired(roster, data, reqFlex);
+  }
+
   std::sort(ret.rosters_.begin(), ret.rosters_.end(), RosterComp{});
   return ret;
 }

@@ -7,7 +7,7 @@ namespace DfsOpt {
 
   class Solver {
     public:
-      static OutputData solve(const int nLineups, const InputData& data);
+      static OutputData solve(const int nLineups, InputData& data);
 
   };
 }
