@@ -16,6 +16,7 @@ TEST(ParserTests, Success) {
   EXPECT_EQ(inData.numTes_, 1);
   EXPECT_EQ(inData.numFlex_, 1);
   EXPECT_EQ(inData.numDsts_, 1);
+  EXPECT_FALSE(inData.captainMode_);
 
   // Keeping in mind, position vectors are sorted by increasing cost
   EXPECT_EQ(inData.qbs_.size(), 2);
@@ -50,6 +51,7 @@ TEST(ParserTests, SuccessWithRequiredPlayers) {
   EXPECT_EQ(inData.numTes_, 1);
   EXPECT_EQ(inData.numFlex_, 1);
   EXPECT_EQ(inData.numDsts_, 1);
+  EXPECT_FALSE(inData.captainMode_);
 
   EXPECT_EQ(inData.reqQbs_.size(), 1);
   EXPECT_TRUE((inData.reqQbs_[0] == DfsOpt::Player{"Justin Herbert", "LAC", 7200, 22.9}));
@@ -138,3 +140,33 @@ TEST(ParserTests, SanityCheckRequiredFlexCountFailure) {
   EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
 }
 
+TEST(ParsreTests, CaptainMode) {
+  std::string_view inFile = "captain-mode.xml";
+  DfsOpt::InputData inData{};
+  EXPECT_NO_THROW(inData = DfsOpt::XmlParser::parse(inFile));
+  EXPECT_EQ(inData.budget_, 50000);
+  EXPECT_EQ(inData.numQbs_, 0);
+  EXPECT_EQ(inData.numRbs_, 0);
+  EXPECT_EQ(inData.numWrs_, 0);
+  EXPECT_EQ(inData.numTes_, 0);
+  EXPECT_EQ(inData.numFlex_, 6);
+  EXPECT_EQ(inData.numDsts_, 0);
+  EXPECT_TRUE(inData.captainMode_);
+
+  // Only check kickers here, other poisition parsing is unchanged
+  EXPECT_EQ(inData.ks_.size(), 2);
+  EXPECT_TRUE((inData.ks_[0] == DfsOpt::Player{"Ryan Succop", "TB", 3800, 7.3}));
+  EXPECT_TRUE((inData.ks_[1] == DfsOpt::Player{"Justin Tucker", "BAL", 4000, 9.0}));
+}
+
+TEST(ParserTests, CaptainModeNonFlex) {
+  std::string_view inFile = "captain-mode-nonflex.xml";
+  DfsOpt::InputData inData{};
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+}
+
+TEST(ParserTests, CaptainModeRequiredPlayers) {
+  std::string_view inFile = "captain-mode-req-players.xml";
+  DfsOpt::InputData inData{};
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+}

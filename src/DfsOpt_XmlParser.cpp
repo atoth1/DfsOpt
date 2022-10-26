@@ -27,6 +27,10 @@ DfsOpt::InputData DfsOpt::XmlParser::parse(const std::string_view inFile) {
     return std::stod(str.raw());
   };
 
+  auto toBool = [](const Glib::ustring& str) {
+    return str == "true" || str == "1";
+  };
+
   auto parseRequirements = [&](const xmlpp::Node* node, InputData& data) {
     for (const auto* child : node->get_children()) {
       const auto* elem = dynamic_cast<const xmlpp::Element*>(child);
@@ -45,6 +49,8 @@ DfsOpt::InputData DfsOpt::XmlParser::parse(const std::string_view inFile) {
           data.numFlex_ = toInt(elem->get_child_text()->get_content());
         } else if (elem->get_name() == "num_dsts") {
           data.numDsts_ = toInt(elem->get_child_text()->get_content());
+        } else if (elem->get_name() == "captain_mode") {
+          data.captainMode_ = toBool(elem->get_child_text()->get_content());
         }
       }
     }
@@ -122,9 +128,20 @@ DfsOpt::InputData DfsOpt::XmlParser::parse(const std::string_view inFile) {
       parsePlayers(node, data.wrs_);
     } else if (node->get_name() == "tes") {
       parsePlayers(node, data.tes_);
+    } else if (node->get_name() == "ks") {
+      parsePlayers(node, data.ks_);
     } else if (node->get_name() == "dsts") {
       parseDsts(node, data.dsts_);
     }
+  }
+
+  if (data.captainMode_ && (data.reqQbs_.size() || data.reqRbs_.size() || data.reqWrs_.size()
+      || data.reqTes_.size() || data.reqDsts_.size())) {
+    throw std::runtime_error("ERROR: Not currently supporting required players for Captain Mode.");
+  }
+
+  if (data.captainMode_&& (data.numQbs_ || data.numRbs_ || data.numWrs_ || data.numTes_ || data.numDsts_)) {
+    throw std::runtime_error("ERROR: Only specify number of flex players for Captian Mode.");
   }
 
   // A couple sanity checks
@@ -189,6 +206,7 @@ DfsOpt::InputData DfsOpt::XmlParser::parse(const std::string_view inFile) {
   std::sort(data.rbs_.begin(), data.rbs_.end(), comp);
   std::sort(data.wrs_.begin(), data.wrs_.end(), comp);
   std::sort(data.tes_.begin(), data.tes_.end(), comp);
+  std::sort(data.ks_.begin(), data.ks_.end(), comp);
   std::sort(data.dsts_.begin(), data.dsts_.end(), comp);
   
   
@@ -223,6 +241,7 @@ std::string_view DfsOpt::XmlParser::schemaString() {
     <xs:element name="num_tes" minOccurs="0" maxOccurs="1" type="intType"/>
     <xs:element name="num_flex" minOccurs="0" maxOccurs="1" type="intType"/>
     <xs:element name="num_dsts" minOccurs="0" maxOccurs="1" type="intType"/>
+    <xs:element name="captain_mode" minOccurs="0" maxOccurs="1" type="xs:boolean" />
   </xs:sequence>
 </xs:complexType>
 
@@ -293,6 +312,7 @@ std::string_view DfsOpt::XmlParser::schemaString() {
     <xs:element name="rbs" minOccurs="0" maxOccurs="1" type="playerListType"/>
     <xs:element name="wrs" minOccurs="0" maxOccurs="1" type="playerListType"/>
     <xs:element name="tes" minOccurs="0" maxOccurs="1" type="playerListType"/>
+    <xs:element name="ks" minOccurs="0" maxOccurs="1" type="playerListType" />
     <xs:element name="dsts" minOccurs="0" maxOccurs="1" type="dstListType"/>
   </xs:sequence>
 </xs:complexType>

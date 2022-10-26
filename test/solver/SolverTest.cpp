@@ -17,8 +17,9 @@ TEST(SolverTests, ExpectedOutputs) {
     std::vector<DfsOpt::Player> rbs{{"d", "4", 4, 10.}, {"e", "5", 5, 5.}};
     std::vector<DfsOpt::Player> wrs{{"f", "6", 6, 0.}, {"g", "7", 7, 10.}};
     std::vector<DfsOpt::Player> tes{{"h", "8", 8, 10.}, {"i", "9", 9, 0.}};
+    std::vector<DfsOpt::Player> ks{};
     std::vector<DfsOpt::Dst> dsts{{"j", 10, 0.}, {"k", 11, 10.}};
-    return DfsOpt::InputData{budget, numQbs, numRbs, numWrs, numTes, numFlex, numDsts, qbs, rbs, wrs, tes, dsts};
+    return DfsOpt::InputData{budget, numQbs, numRbs, numWrs, numTes, numFlex, numDsts, qbs, rbs, wrs, tes, ks, dsts};
   };
 
   auto inData = getInData();
@@ -73,12 +74,13 @@ TEST(SolverTests, ExpectedOutputsWithRequiredPlayers) {
     std::vector<DfsOpt::Player> rbs{{"b", "2", 1, 1.}, {"c", "3", 2, 1.}};
     std::vector<DfsOpt::Player> wrs{{"d", "4", 1, 1.}};
     std::vector<DfsOpt::Player> tes{{"e", "5", 1, 1.}, {"e0", "6", 1, 1.}};
+    std::vector<DfsOpt::Player> ks{};
     std::vector<DfsOpt::Dst> dsts{{"g", 1, 1.}, {"h", 2, 2.}};
     std::vector<DfsOpt::Player> reqQbs{{"a", "1", 1, 1.}};
     std::vector<DfsOpt::Player> reqTes{{"e", "5", 1, 1.}};
     std::vector<DfsOpt::Dst> reqDsts{{"g", 1, 1.}};
     return DfsOpt::InputData{budget, numQbs, numRbs, numWrs, numTes, numFlex, numDsts,
-      qbs, rbs, wrs, tes, dsts, reqQbs, {}, {}, reqTes, reqDsts};
+      qbs, rbs, wrs, tes, ks, dsts, reqQbs, {}, {}, reqTes, reqDsts};
   };
 
   auto inData = getInData();
@@ -115,10 +117,11 @@ TEST(SolverTests, RequiredPlayersTooExpensive) {
     std::vector<DfsOpt::Player> rbs{{"b", "2", 1, 1.}, {"c", "3", 1, 1.}};
     std::vector<DfsOpt::Player> wrs{{"d", "4", 1, 1.}};
     std::vector<DfsOpt::Player> tes{{"e", "5", 1, 1.}};
+    std::vector<DfsOpt::Player> ks{};
     std::vector<DfsOpt::Dst> dsts{{"g", 1, 1.}};
     std::vector<DfsOpt::Player> reqQbs{{"a0", "0", 6, 1.}};
     return DfsOpt::InputData{budget, numQbs, numRbs, numWrs, numTes, numFlex, numDsts,
-      qbs, rbs, wrs, tes, dsts, reqQbs};
+      qbs, rbs, wrs, tes, ks, dsts, reqQbs};
   };
 
   auto inData = getInData();
@@ -139,8 +142,9 @@ TEST(SolverTests, NoSolutions) {
     std::vector<DfsOpt::Player> rbs{{"b", "2", 1, 1.}, {"c", "3", 1, 1.}};
     std::vector<DfsOpt::Player> wrs{{"d", "4", 1, 1.}};
     std::vector<DfsOpt::Player> tes{{"e", "5", 1, 1.}};
+    std::vector<DfsOpt::Player> ks{};
     std::vector<DfsOpt::Dst> dsts{{"g", 1, 1.}};
-    return DfsOpt::InputData{budget, numQbs, numRbs, numWrs, numTes, numFlex, numDsts, qbs, rbs, wrs, tes, dsts};
+    return DfsOpt::InputData{budget, numQbs, numRbs, numWrs, numTes, numFlex, numDsts, qbs, rbs, wrs, tes, ks, dsts};
   };
 
   auto inData = getInData();

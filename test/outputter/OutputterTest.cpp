@@ -14,9 +14,9 @@ TEST(OutputterTests, NumRequested) {
   auto getOutData = []() {
     return DfsOpt::OutputData{{
       DfsOpt::Roster{6, 6., {{"A", "A", 1, 1.}}, {{"B", "B", 1, 1.}}, {{"C", "C", 1, 1.}},
-        {{"D", "D", 1, 1.}}, {{"E", "E", 1, 1.}}, {{"F", 1, 1.}}},
+        {{"D", "D", 1, 1.}}, {{"E", "E", 1, 1.}}, {{"F", 1, 1.}}, false},
       DfsOpt::Roster{6, 6., {{"G", "G", 1, 1.}}, {{"G", "G", 1, 1.}}, {{"I", "I", 1, 1.}},
-        {{"J", "J", 1, 1.}}, {{"K", "K", 1, 1.}}, {{"L", 1, 1.}}}
+        {{"J", "J", 1, 1.}}, {{"K", "K", 1, 1.}}, {{"L", 1, 1.}}, false}
       }};
   };
   DfsOpt::Outputter::output(outFile, getOutData(), nLineups, time);
@@ -41,7 +41,7 @@ TEST(OutputterTests, FewerThanRequested) {
   auto getOutData = []() {
     return DfsOpt::OutputData{{
       DfsOpt::Roster{6, 6., {{"A", "A", 1, 1.}}, {{"B", "B", 1, 1.}}, {{"C", "C", 1, 1.}},
-        {{"D", "D", 1, 1.}}, {{"E", "E", 1, 1.}}, {{"F", 1, 1.}}},
+        {{"D", "D", 1, 1.}}, {{"E", "E", 1, 1.}}, {{"F", 1, 1.}}, false},
     }};
   };
   DfsOpt::Outputter::output(outFile, getOutData(), nLineups, time);

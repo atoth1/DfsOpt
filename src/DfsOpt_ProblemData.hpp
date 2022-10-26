@@ -15,7 +15,7 @@ struct Player {
 };
 
 inline bool operator==(const Player& l, const Player& r) {
-  return l.name_ == r.name_ && l.team_ == r.team_ && l.salary_ == r.salary_
+  return l.name_ == r.name_ && l.team_ == r.team_ && l.salary_ == r.salary_ && l.team_ == r.team_
     && std::abs(l.expectedPts_ - r.expectedPts_) < 1.e-14;
 }
 
@@ -23,8 +23,6 @@ struct Dst {
   std::string team_{};
   int salary_{};
   double expectedPts_{};
-
-
 };
 
 inline bool operator==(const Dst& l, const Dst& r) {
@@ -45,6 +43,7 @@ struct InputData {
   std::vector<Player> rbs_{};
   std::vector<Player> wrs_{};
   std::vector<Player> tes_{};
+  std::vector<Player> ks_{};
   std::vector<Dst> dsts_{};
 
   std::vector<Player> reqQbs_{};
@@ -52,17 +51,22 @@ struct InputData {
   std::vector<Player> reqWrs_{};
   std::vector<Player> reqTes_{};
   std::vector<Dst> reqDsts_{};
+
+  bool captainMode_{};
 };
 
 struct Roster {
   int cost_{};
   double expectedPts_{};
+
   std::vector<Player> qbs_{};
   std::vector<Player> rbs_{};
   std::vector<Player> wrs_{};
   std::vector<Player> tes_{};
   std::vector<Player> flex_{};
   std::vector<Dst> dsts_{};
+  
+  bool captainMode{};
 };
 
 struct OutputData {

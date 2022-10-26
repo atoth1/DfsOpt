@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+  <requirements>
+    <budget>50000</budget>
+    <num_flex>6</num_flex>
+    <captain_mode>true</captain_mode>
+  </requirements>
+  <qbs>
+    <player name="Lamar Jackson" team="BAL" cost="8000" pts="23.0" />
+    <player name="Justin Herbert" team="LAC" cost="7200" pts="22.9" />
+  </qbs>
+  <rbs>
+    <player name="Austin Ekeler" team="LAC" cost="8300" pts="22.2" />
+    <player name="Saquon Barkley" team="NYG" cost="7900" pts="21.7" />
+    <player name="Christian McCaffrey" team="CAR" cost="8400" pts="19.2" />
+    <player name="Derrick Henry" team="TEN" cost="8200" pts="17.9" />
+  </rbs>
+  <wrs>
+    <player name="Davante Adams" team="LV" cost="8700" pts="20.7" />
+    <player name="CeeDee Lamb" team="DAL" cost="6800" pts="19.8" />
+    <player name="Deebo Samuel" team="SF" cost="7600" pts="16.4" />
+    <player name="Tee Higgins" team="CIN" cost="6400" pts="15.7" />
+  </wrs>
+  <tes>
+    <player name="Travis Kelce" team="KC" cost="8000" pts="18.0" />
+    <player name="Mark Andrews" team="BAL" cost="7400" pts="17.8" />
+  </tes>
+  <ks>
+    <player name="Justin Tucker" team="BAL" cost="4000" pts="9.0" />
+    <player name="Ryan Succop" team="TB" cost="3800" pts="7.3" />
+  </ks>
+  <dsts>
+    <dst team="TB" cost="3900" pts="13.4" />
+    <dst team="LV" cost="3300" pts="13.0" />
+  </dsts>
+</data>
