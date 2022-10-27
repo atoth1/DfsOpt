@@ -1,0 +1,10 @@
+dfs-opt produced the following 1 lineups after 0.5 seconds of solution time.
+
+----------------------------------------------------------------------------------------------------
+
+Lineup #1:          Expected Points = 2.5                   Lineup Cost = 5               
+FLEX:                           Team                 Expected Points                Cost
+  A                             A                                1.0                   2
+DST:
+  B (C)                                                          1.5                   3
+

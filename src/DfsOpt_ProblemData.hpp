@@ -71,6 +71,8 @@ struct Roster {
 
 struct OutputData {
   std::vector<Roster> rosters_{};
+
+  bool captainMode_{ false };
 };
 
 }

@@ -25,7 +25,7 @@ void DfsOpt::Outputter::output(
     << solveTime << " seconds of solution time.\n";
   if (outData.rosters_.size() < nLineupsExpected) {
     *out << "NOTE: This is fewer than the number requested. Either not enough input player data was "
-      << "provided (at least not enough cheaper players), or an reasonably large number  was requested.\n"; 
+      << "provided (at least not enough cheaper players), or an reasonably large number  was requested.\n";
   }
   *out << '\n';
 
@@ -56,17 +56,35 @@ void DfsOpt::Outputter::output(
       *out << header.str() << '\n';
     };
 
-    auto playerOut = [](std::ostream* out, const DfsOpt::Player& player) {
+    auto playerOut = [](std::ostream* out, const DfsOpt::Player& player, const bool isCaptain = false) {
+      std::ostringstream name;
+      name << player.name_;
+      int salary = player.salary_;
+      double pts = player.expectedPts_;
+      if (isCaptain) {
+        name << " (C)";
+        salary *= 1.5;
+        pts *= 1.5;
+      }
       std::ostringstream ostr;
-      ostr << std::left << "  " << std::setw(30) << player.name_ << std::setw(6) << player.team_ << std::right
-        << std::setw(30) << std::fixed << std::setprecision(1) << player.expectedPts_ << std::setw(20) << player.salary_;
+      ostr << std::left << "  " << std::setw(30) << name.str() << std::setw(6) << player.team_ << std::right
+        << std::setw(30) << std::fixed << std::setprecision(1) << pts << std::setw(20) << salary;
       *out << ostr.str() << '\n';
     };
 
-    auto dstOut = [](std::ostream* out, const DfsOpt::Dst& dst) {
+    auto dstOut = [](std::ostream* out, const DfsOpt::Dst& dst, const bool isCaptain = false) {
+      std::ostringstream team;
+      team << dst.team_;
+      int salary = dst.salary_;
+      double pts = dst.expectedPts_;
+      if (isCaptain) {
+        team << " (C)";
+        salary *= 1.5;
+        pts *= 1.5;
+      }
       std::stringstream ostr;
-      ostr << std::left << "  " << std::setw(36) << dst.team_ << std::right << std::setw(30)
-        << std::fixed << std::setprecision(1) << dst.expectedPts_ << std::setw(20) << dst.salary_;
+      ostr << std::left << "  " << std::setw(36) << team.str() << std::right << std::setw(30)
+        << std::fixed << std::setprecision(1) << pts << std::setw(20) << salary;
       *out << ostr.str() << '\n';
     };
 
@@ -101,14 +119,16 @@ void DfsOpt::Outputter::output(
     }
     if (!roster.flex_.empty()) {
       posHeader(out, "FLEX:", firstPrint);
+      int id = 0;
       for (const auto& player : roster.flex_) {
-        playerOut(out, player);
+        playerOut(out, player, outData.captainMode_ && !roster.dstIsCaptain_ && id++ == 0);
       }
     }
     if (!roster.dsts_.empty()) {
       *out << "DST:\n";
+      int id = 0;
       for (const auto& player : roster.dsts_) {
-        dstOut(out, player);
+        dstOut(out, player,  outData.captainMode_ && roster.dstIsCaptain_ && id++ == 0);
       }
     }
     *out << '\n';

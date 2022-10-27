@@ -351,7 +351,7 @@ DfsOpt::OutputData DfsOpt::Solver::solve(
     throw std::runtime_error("ERROR: Salaries for required players already exceeds allowed budget.");
   }
 
-  DfsOpt::OutputData ret{};
+  DfsOpt::OutputData ret{{}, data.captainMode_};
   ret.rosters_.reserve(nLineups);
   Roster candidate{};
   if (data.captainMode_) {
