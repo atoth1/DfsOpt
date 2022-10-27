@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data>
   <requirements>
+    <budget>100</budget>
     <num_flex>6</num_flex>
     <captain_mode>true</captain_mode>
   </requirements>
-  <required_players>
-    <player name="Lamar Jackson" team="BAL" pos="QB" cost="8000" pts="23.0" />
-  <required_players/>
+  <required>
+    <required-player name="Lamar Jackson" team="BAL" pos="QB" cost="8000" pts="23.0" />
+  </required>
   <qbs>
     <player name="Lamar Jackson" team="BAL" cost="8000" pts="23.0" />
     <player name="Justin Herbert" team="LAC" cost="7200" pts="22.9" />

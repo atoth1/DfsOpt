@@ -1,8 +1,9 @@
 #include "DfsOpt.hpp"
 #include "gtest/gtest.h"
+#include "libxml++/libxml++.h"
 
 #include <cmath>
-#include <exception>
+#include <stdexcept>
 #include <string_view>
 
 TEST(ParserTests, Success) {
@@ -83,61 +84,61 @@ TEST(ParserTests, SuccessWithRequiredPlayers) {
 TEST(ParserTests, SchemaValidationIllFormedDocument) {
   std::string_view inFile = "ill-formed.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), xmlpp::parse_error);
 }
 
 TEST(ParserTests, SchemaValidationMissingRequirements) {
   std::string_view inFile = "missing-reqs.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), xmlpp::validity_error);
 }
 
 TEST(ParserTests, SchemaValidationMissingPlayerAttr) {
   std::string_view inFile = "missing-player-attr.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), xmlpp::validity_error);
 }
 
 TEST(ParserTests, SchemaValidationMissingDstAttr) {
   std::string_view inFile = "missing-dst-attr.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), xmlpp::validity_error);
 }
 
 TEST(ParserTests, SchemaValidationNegativeCost) {
   std::string_view inFile = "negative-cost.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), xmlpp::validity_error);
 }
 
 TEST(ParserTests, SchemaValidationNegativePoints) {
   std::string_view inFile = "negative-points.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), xmlpp::validity_error);
 }
 
 TEST(ParserTests, SanityCheckQbCountFailure) {
   std::string_view inFile = "sanity-check-qbs.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::runtime_error);
 }
 
 TEST(ParserTests, SanityCheckFlexCountFailure) {
   std::string_view inFile = "sanity-check-flex.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::runtime_error);
 }
 
 TEST(ParserTests, SanityCheckRequiredQbsCountFailure) {
   std::string_view inFile = "sanity-check-req-qbs.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::runtime_error);
 }
 
 TEST(ParserTests, SanityCheckRequiredFlexCountFailure) {
   std::string_view inFile = "sanity-check-req-flex.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::runtime_error);
 }
 
 TEST(ParsreTests, CaptainMode) {
@@ -162,11 +163,11 @@ TEST(ParsreTests, CaptainMode) {
 TEST(ParserTests, CaptainModeNonFlex) {
   std::string_view inFile = "captain-mode-nonflex.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::runtime_error);
 }
 
 TEST(ParserTests, CaptainModeRequiredPlayers) {
   std::string_view inFile = "captain-mode-req-players.xml";
   DfsOpt::InputData inData{};
-  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::exception);
+  EXPECT_THROW(inData = DfsOpt::XmlParser::parse(inFile), std::runtime_error);
 }

@@ -13,6 +13,7 @@ NOTE: As the solution algorithm discovers all possible valid lineups with the gi
 constraints, run times can get long if too many player options are provided (the larger
 sample input runs in ~8 minutes on my machine with an optimized build), so it's
 probably advisable to only include players you'd consider starting.
+
 You may optionally specify players that must appear in the final lineups.
 Useful if there's a matchup you're higher on than consensus, and additional benefit
 of faster run times (smaller search space for valid rosters). See week7-2022-required-players.xml

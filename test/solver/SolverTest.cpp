@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 
 #include <cmath>
-#include <exception>
+#include <stdexcept>
 
 TEST(SolverTests, ExpectedOutputs) {
   auto getInData = []() {
@@ -126,7 +126,7 @@ TEST(SolverTests, RequiredPlayersTooExpensive) {
 
   auto inData = getInData();
   DfsOpt::OutputData outData{};
-  EXPECT_THROW(outData = DfsOpt::Solver::solve(1, inData), std::exception);
+  EXPECT_THROW(outData = DfsOpt::Solver::solve(1, inData), std::runtime_error);
 }
 
 TEST(SolverTests, NoSolutions) {
