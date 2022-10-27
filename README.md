@@ -17,3 +17,7 @@ You may optionally specify players that must appear in the final lineups.
 Useful if there's a matchup you're higher on than consensus, and additional benefit
 of faster run times (smaller search space for valid rosters). See week7-2022-required-players.xml
 in sample-inputs for usage example.
+
+This also supports optimizing the Captain Mode, where all players are flex-eligible
+and a single player/dst gets 1.5x points for 1.5x cost. see week8-2022-tb-bal-captain.xml
+for an example input for this mode.

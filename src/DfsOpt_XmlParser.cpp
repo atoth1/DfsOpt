@@ -209,7 +209,6 @@ DfsOpt::InputData DfsOpt::XmlParser::parse(const std::string_view inFile) {
   std::sort(data.ks_.begin(), data.ks_.end(), comp);
   std::sort(data.dsts_.begin(), data.dsts_.end(), comp);
   
-  
   return data;
 }
 

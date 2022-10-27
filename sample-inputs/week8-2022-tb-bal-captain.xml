@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Small sample captain mode input for Week 8 TB-BAL of 2022 NFL season. Salaries -->
+<!-- taken from DraftKings and expected points from Yahoo PPR projections. -->
+<!-- Salaries and points should be given for the flex slot, code handles -->
+<!-- inflation for player selected as captain internally. -->
+
+<data>
+
+  <requirements>
+    <budget>50000</budget>
+    <num_flex>6</num_flex>
+    <captain_mode>true</captain_mode>
+  </requirements>
+
+  <qbs>
+    <player name="Lamar Jackson" team="BAL" cost="11800" pts="22.4" />
+    <player name="Tom Brady" team="TB" cost="10000" pts="19.4" />
+  </qbs>
+
+  <rbs>
+    <player name="Leonard Fournette" team="TB" cost="8800" pts="14.9" />
+    <player name="Gus Edwards" team="BAL" cost="7600" pts="9.2" />
+    <player name="Rachaad White" team="TB" cost="4800" pts="8.6" />
+    <player name="Kenyan Drake" team="BAL" cost="4600" pts="8.0" />
+    <player name="Justice Hill" team="BAL" cost="2400" pts="5.0" />
+  </rbs>
+
+  <wrs>
+    <player name="Mike Evans" team="TB" cost="11000" pts="15.5" />
+    <player name="Chris Godwin" team="TB" cost="9000" pts="15.1" />
+    <player name="Rashod Bateman" team="BAL" cost="7000" pts="11.7" />
+    <player name="Devin Duvernay" team="BAL" cost="6400" pts="10.2" />
+    <player name="Russell Gage" team="TB" cost="5800" pts="5.9" />
+    <player name="Julio Jones" team="TB" cost="5400" pts="7.1" />
+    <player name="Scottie Miller" team="TB" cost="3200" pts="2.5" />
+    <player name="Demarcus Robinson" team="BAL" cost="2800" pts="5.4" />
+  </wrs>
+
+  <tes>
+    <player name="Mark Andrews" team="BAL" cost="9200" pts="15.8" />
+    <player name="Cade Otton" team="TB" cost="5000" pts="8.5" />
+    <player name="Isaiah Likely" team="BAL" cost="1600" pts="3.3" />
+    <player name="Kyle Rudolph" team="TB" cost="1000" pts="1.7" />
+  </tes>
+
+  <ks>
+    <player name="Justin Tucker" team="BAL" cost="4000" pts="9.0" />
+    <player name="Ryan Succop" team="TB" cost="3800" pts="7.7" />
+  </ks>
+
+  <dsts>
+    <dst team="BAL" cost="4400" pts="6.0" />
+    <dst team="TB" cost="3400" pts="6.0" />
+  </dsts>
+
+</data>

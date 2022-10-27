@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <set>
 #include <utility>
+#include <variant>
 
 namespace {
   enum class PosStatus {
@@ -23,7 +24,7 @@ namespace {
     };
   };
 
-  void impl(
+  void implStandard(
     const DfsOpt::InputData& data,
     const int nRosters,
     const int startId,
@@ -39,7 +40,7 @@ namespace {
     switch (pos) {
       case PosStatus::QB: {
         if (data.numQbs_ == 0) {
-          impl(data, nRosters, 0, PosStatus::RB, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+          implStandard(data, nRosters, 0, PosStatus::RB, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
         } else {
           for (int id = startId; id < data.qbs_.size(); ++id) {
             if (current.cost_ + data.qbs_[id].salary_ > data.budget_) break;
@@ -48,9 +49,9 @@ namespace {
             current.expectedPts_ += data.qbs_[id].expectedPts_;
             qbIds.push_back(id);
             if (qbIds.size() == data.numQbs_) {
-              impl(data, nRosters, 0, PosStatus::RB, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, 0, PosStatus::RB, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             } else {
-              impl(data, nRosters, id+1, PosStatus::QB, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, id+1, PosStatus::QB, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             }
             current.qbs_.pop_back();
             current.cost_ -= data.qbs_[id].salary_;
@@ -61,7 +62,7 @@ namespace {
         break;
       } case PosStatus::RB: {
         if (data.numRbs_ == 0) {
-          impl(data, nRosters, 0, PosStatus::WR, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+          implStandard(data, nRosters, 0, PosStatus::WR, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
         } else {
           for (int id = startId; id < data.rbs_.size(); ++id) {
             if (current.cost_ + data.rbs_[id].salary_ > data.budget_) break;
@@ -70,9 +71,9 @@ namespace {
             current.expectedPts_ += data.rbs_[id].expectedPts_;
             rbIds.push_back(id);
             if (rbIds.size() == data.numRbs_) {
-              impl(data, nRosters, 0, PosStatus::WR, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, 0, PosStatus::WR, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             } else {
-              impl(data, nRosters, id+1, PosStatus::RB, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, id+1, PosStatus::RB, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             }
             current.rbs_.pop_back();
             current.cost_ -= data.rbs_[id].salary_;
@@ -83,7 +84,7 @@ namespace {
         break;
       } case PosStatus::WR: {
         if (data.numWrs_ == 0) {
-          impl(data, nRosters, 0, PosStatus::TE, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+          implStandard(data, nRosters, 0, PosStatus::TE, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
         } else {
           for (int id = startId; id < data.wrs_.size(); ++id) {
             if (current.cost_ + data.wrs_[id].salary_ > data.budget_) break;
@@ -92,9 +93,9 @@ namespace {
             current.expectedPts_ += data.wrs_[id].expectedPts_;
             wrIds.push_back(id);
             if (wrIds.size() == data.numWrs_) {
-              impl(data, nRosters, 0, PosStatus::TE, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, 0, PosStatus::TE, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             } else {
-              impl(data, nRosters, id+1, PosStatus::WR, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, id+1, PosStatus::WR, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             }
             current.wrs_.pop_back();
             current.cost_ -= data.wrs_[id].salary_;
@@ -105,7 +106,7 @@ namespace {
         break;
       } case PosStatus::TE: {
         if (data.numTes_ == 0) {
-          impl(data, nRosters, 0, PosStatus::DST, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+          implStandard(data, nRosters, 0, PosStatus::DST, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
         } else {
           for (int id = startId; id < data.tes_.size(); ++id) {
             if (current.cost_ + data.tes_[id].salary_ > data.budget_) break;
@@ -114,9 +115,9 @@ namespace {
             current.expectedPts_ += data.tes_[id].expectedPts_;
             teIds.push_back(id);
             if (teIds.size() == data.numTes_) {
-              impl(data, nRosters, 0, PosStatus::DST, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, 0, PosStatus::DST, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             } else {
-              impl(data, nRosters, id+1, PosStatus::TE, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, id+1, PosStatus::TE, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             }
             current.tes_.pop_back();
             current.cost_ -= data.tes_[id].salary_;
@@ -127,7 +128,7 @@ namespace {
         break;
       } case PosStatus::DST: {
         if (data.numDsts_ == 0) {
-          impl(data, nRosters, 0, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+          implStandard(data, nRosters, 0, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
         } else {
           for (int id = startId; id < data.dsts_.size(); ++id) {
             if (current.cost_ + data.dsts_[id].salary_ > data.budget_) break;
@@ -136,9 +137,9 @@ namespace {
             current.expectedPts_ += data.dsts_[id].expectedPts_;
             dstIds.push_back(id);
             if (dstIds.size() == data.numDsts_) {
-              impl(data, nRosters, 0, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, 0, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             } else {
-              impl(data, nRosters, id+1, PosStatus::DST, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, id+1, PosStatus::DST, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             }
             current.dsts_.pop_back();
             current.cost_ -= data.dsts_[id].salary_;
@@ -180,7 +181,7 @@ namespace {
             if (current.flex_.size() == data.numFlex_) {
               updateCandidates();
             } else {
-              impl(data, nRosters, id+1, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, id+1, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             }
             current.flex_.pop_back();
             current.cost_ -= data.rbs_[id].salary_;
@@ -205,7 +206,7 @@ namespace {
             if (current.flex_.size() == data.numFlex_) {
               updateCandidates();
             } else {
-              impl(data, nRosters, id+1, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, id+1, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             }
             current.flex_.pop_back();
             current.cost_ -= data.wrs_[posId].salary_;
@@ -229,7 +230,7 @@ namespace {
             if (current.flex_.size() == data.numFlex_) {
               updateCandidates();
             } else {
-              impl(data, nRosters, id+1, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
+              implStandard(data, nRosters, id+1, PosStatus::FLEX, current, qbIds, rbIds, wrIds, teIds, dstIds, candidates);
             }
             current.flex_.pop_back();
             current.cost_ -= data.tes_[posId].salary_;
@@ -238,6 +239,72 @@ namespace {
           }
         }
         break;
+      }
+    }
+  }
+
+  void implCaptain(
+    const int rosterSize,
+    const int rosterSlot,
+    const int captainId,
+    const int startId,
+    const int budget,
+    const int nRosters,
+    const std::vector<std::variant<DfsOpt::Player, DfsOpt::Dst>> all,
+    DfsOpt::Roster& current,
+    std::vector<DfsOpt::Roster>& candidates
+  ) {
+    if (rosterSlot == rosterSize) {
+      RosterComp comp{};
+      if (candidates.size() < nRosters) {
+        candidates.push_back(current);
+        std::make_heap(candidates.begin(), candidates.end(), comp);
+      } else if (comp(current, candidates[0])) {
+        std::pop_heap(candidates.begin(), candidates.end(), comp);
+        candidates.back() = current;
+        std::make_heap(candidates.begin(), candidates.end(), comp);
+      }
+    } else {
+      for (int id = startId; id < all.size(); ++id) {
+        if (std::holds_alternative<DfsOpt::Player>(all[id])) {
+          const auto& player = std::get<DfsOpt::Player>(all[id]);
+          if ((rosterSlot == 0 && 1.5 * player.salary_ > budget) || current.cost_ + player.salary_ > budget) break;
+          current.flex_.push_back(player);
+          if (rosterSlot == 0) {
+            current.dstIsCaptain_ = false;
+            current.cost_ += 1.5 * player.salary_;
+            current.expectedPts_ += 1.5 * player.expectedPts_;
+            implCaptain(rosterSize, 1, id, 0, budget, nRosters, all, current, candidates);
+            current.cost_ -= 1.5 * player.salary_;
+            current.expectedPts_ -= 1.5 * player.expectedPts_;
+          } else if (id != captainId) {
+            current.cost_ += player.salary_;
+            current.expectedPts_ += player.expectedPts_;
+            implCaptain(rosterSize, rosterSlot+1, captainId, id+1, budget, nRosters, all, current, candidates);
+            current.cost_ -= player.salary_;
+            current.expectedPts_ -= player.expectedPts_;
+          }
+          current.flex_.pop_back();
+        } else {
+          const auto& dst = std::get<DfsOpt::Dst>(all[id]);
+          if ((rosterSlot == 0 && 1.5 * dst.salary_ > budget) || current.cost_ + dst.salary_ > budget) break;
+          current.dsts_.push_back(dst);
+          if (rosterSlot == 0) {
+            current.dstIsCaptain_ = true;
+            current.cost_ += 1.5 * dst.salary_;
+            current.expectedPts_ += 1.5 * dst.expectedPts_;
+            implCaptain(rosterSize, 1, id, 0, budget, nRosters, all, current, candidates);
+            current.cost_ -= 1.5 * dst.salary_;
+            current.expectedPts_ -= 1.5 * dst.expectedPts_;
+          } else if (id != captainId) {
+            current.cost_ += dst.salary_;
+            current.expectedPts_ += dst.expectedPts_;
+            implCaptain(rosterSize, rosterSlot+1, captainId, id+1, budget, nRosters, all, current, candidates);
+            current.cost_ -= dst.salary_;
+            current.expectedPts_ -= dst.expectedPts_;
+          }
+          current.dsts_.pop_back();
+        }
       }
     }
   }
@@ -287,8 +354,54 @@ DfsOpt::OutputData DfsOpt::Solver::solve(
   DfsOpt::OutputData ret{};
   ret.rosters_.reserve(nLineups);
   Roster candidate{};
-  std::vector<int> qbIds{}, rbIds{}, wrIds{}, teIds{}, dstIds{};
-  impl(data, nLineups, 0, PosStatus::QB, candidate, qbIds, rbIds, wrIds, teIds, dstIds, ret.rosters_);
+  if (data.captainMode_) {
+    auto consolidate = [&]() {
+      // Could probably do this more efficiently, but not performance critical
+      using entry_type = std::variant<DfsOpt::Player, DfsOpt::Dst>;
+      int total = data.qbs_.size() + data.rbs_.size() + data.wrs_.size()
+        + data.tes_.size() + data.ks_.size() + data.dsts_.size();
+      std::vector<entry_type> all{};
+      all.reserve(total);
+      std::for_each(data.qbs_.cbegin(), data.qbs_.cend(), [&](const DfsOpt::Player& entry) {
+        all.push_back(entry_type(std::in_place_type<DfsOpt::Player>, entry));
+      });
+      std::for_each(data.rbs_.cbegin(), data.rbs_.cend(), [&](const DfsOpt::Player& entry) {
+        all.push_back(entry_type(std::in_place_type<DfsOpt::Player>, entry));
+      });
+      std::for_each(data.wrs_.cbegin(), data.wrs_.cend(), [&](const DfsOpt::Player& entry) {
+        all.push_back(entry_type(std::in_place_type<DfsOpt::Player>, entry));
+      });
+      std::for_each(data.tes_.cbegin(), data.tes_.cend(), [&](const DfsOpt::Player& entry) {
+        all.push_back(entry_type(std::in_place_type<DfsOpt::Player>, entry));
+      });
+      std::for_each(data.ks_.cbegin(), data.ks_.cend(), [&](const DfsOpt::Player& entry) {
+        all.push_back(entry_type(std::in_place_type<DfsOpt::Player>, entry));
+      });
+      std::for_each(data.dsts_.cbegin(), data.dsts_.cend(), [&](const DfsOpt::Dst& entry) {
+        all.push_back(entry_type(std::in_place_type<DfsOpt::Dst>, entry));
+      });
+      std::sort(all.begin(), all.end(), [](const entry_type& l, const entry_type& r) {
+        if (std::holds_alternative<DfsOpt::Player>(l)) {
+          if (std::holds_alternative<DfsOpt::Player>(r)) {
+            return std::get<DfsOpt::Player>(l).salary_ < std::get<DfsOpt::Player>(r).salary_;
+          } else {
+            return std::get<DfsOpt::Player>(l).salary_ < std::get<DfsOpt::Dst>(r).salary_;
+          }
+        } else {
+          if (std::holds_alternative<DfsOpt::Player>(r)) {
+            return std::get<DfsOpt::Dst>(l).salary_ < std::get<DfsOpt::Player>(r).salary_;
+          } else {
+            return std::get<DfsOpt::Dst>(l).salary_ < std::get<DfsOpt::Dst>(r).salary_;
+          }
+        }
+      });
+      return all;
+    };
+    implCaptain(data.numFlex_, 0, -1, 0, data.budget_, nLineups, consolidate(), candidate, ret.rosters_);
+  } else {
+    std::vector<int> qbIds{}, rbIds{}, wrIds{}, teIds{}, dstIds{};
+    implStandard(data, nLineups, 0, PosStatus::QB, candidate, qbIds, rbIds, wrIds, teIds, dstIds, ret.rosters_);
+  }
 
   auto addRequired = [&](
     DfsOpt::Roster& roster,

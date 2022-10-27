@@ -151,3 +151,74 @@ TEST(SolverTests, NoSolutions) {
   auto outData = DfsOpt::Solver::solve(1, inData);
   EXPECT_EQ(outData.rosters_.size(), 0);
 }
+
+TEST(SolverTests, CaptainMode) {
+  auto getInData = []() {
+    static constexpr int budget = 100;
+    static constexpr int numFlex = 6;
+    std::vector<DfsOpt::Player> qbs{{"a", "1", 1, 1.}};
+    std::vector<DfsOpt::Player> rbs{{"b", "2", 2, 2.}, {"c", "3", 3, 3.}};
+    std::vector<DfsOpt::Player> wrs{{"d", "4", 4, 4.}};
+    std::vector<DfsOpt::Player> tes{{"e", "5", 5, 5.}};
+    std::vector<DfsOpt::Player> ks{{"g", "6", 6, 6.}};
+    std::vector<DfsOpt::Dst> dsts{{"h", 0, 0.}};
+    return DfsOpt::InputData{budget, 0, 0, 0, 0, numFlex, 0, qbs, rbs, wrs, tes, ks, dsts, {}, {}, {}, {}, {}, true};
+  };
+
+  auto inData = getInData();
+  auto outData = DfsOpt::Solver::solve(1, inData);
+  EXPECT_EQ(outData.rosters_.size(), 1);
+
+  auto& r = outData.rosters_[0];
+  EXPECT_EQ(r.cost_, 24);
+  EXPECT_NEAR(r.expectedPts_, 24., 1.0e-14);
+  EXPECT_EQ(r.qbs_.size(), 0);
+  EXPECT_EQ(r.rbs_.size(), 0);
+  EXPECT_EQ(r.wrs_.size(), 0);
+  EXPECT_EQ(r.tes_.size(), 0);
+  EXPECT_EQ(r.flex_.size(), 6);
+  EXPECT_FALSE(r.dstIsCaptain_);
+  // First player in flex array is captain
+  EXPECT_TRUE((r.flex_[0] == DfsOpt::Player{"g", "6", 6, 6.}));
+  EXPECT_TRUE((r.flex_[1] == DfsOpt::Player{"a", "1", 1, 1.}));
+  EXPECT_TRUE((r.flex_[2] == DfsOpt::Player{"b", "2", 2, 2.}));
+  EXPECT_TRUE((r.flex_[3] == DfsOpt::Player{"c", "3", 3, 3.}));
+  EXPECT_TRUE((r.flex_[4] == DfsOpt::Player{"d", "4", 4, 4.}));
+  EXPECT_TRUE((r.flex_[5] == DfsOpt::Player{"e", "5", 5, 5.}));
+  EXPECT_EQ(r.dsts_.size(), 0);
+}
+
+TEST(SolverTests, CaptainModeDstCaptain) {
+  auto getInData = []() {
+    static constexpr int budget = 100;
+    static constexpr int numFlex = 6;
+    std::vector<DfsOpt::Player> qbs{{"a", "1", 1, 1.}};
+    std::vector<DfsOpt::Player> rbs{{"b", "2", 2, 2.}, {"c", "3", 3, 3.}};
+    std::vector<DfsOpt::Player> wrs{{"d", "4", 4, 4.}};
+    std::vector<DfsOpt::Player> tes{{"e", "5", 5, 5.}};
+    std::vector<DfsOpt::Player> ks{{"g", "6", 0, 0.}};
+    std::vector<DfsOpt::Dst> dsts{{"h", 6, 6.}};
+    return DfsOpt::InputData{budget, 0, 0, 0, 0, numFlex, 0, qbs, rbs, wrs, tes, ks, dsts, {}, {}, {}, {}, {}, true};
+  };
+
+  auto inData = getInData();
+  auto outData = DfsOpt::Solver::solve(1, inData);
+  EXPECT_EQ(outData.rosters_.size(), 1);
+
+  auto& r = outData.rosters_[0];
+  EXPECT_EQ(r.cost_, 24);
+  EXPECT_NEAR(r.expectedPts_, 24., 1.0e-14);
+  EXPECT_EQ(r.qbs_.size(), 0);
+  EXPECT_EQ(r.rbs_.size(), 0);
+  EXPECT_EQ(r.wrs_.size(), 0);
+  EXPECT_EQ(r.tes_.size(), 0);
+  EXPECT_EQ(r.flex_.size(), 5);
+  EXPECT_TRUE(r.dstIsCaptain_);
+  EXPECT_TRUE((r.flex_[0] == DfsOpt::Player{"a", "1", 1, 1.}));
+  EXPECT_TRUE((r.flex_[1] == DfsOpt::Player{"b", "2", 2, 2.}));
+  EXPECT_TRUE((r.flex_[2] == DfsOpt::Player{"c", "3", 3, 3.}));
+  EXPECT_TRUE((r.flex_[3] == DfsOpt::Player{"d", "4", 4, 4.}));
+  EXPECT_TRUE((r.flex_[4] == DfsOpt::Player{"e", "5", 5, 5.}));
+  EXPECT_EQ(r.dsts_.size(), 1);
+  EXPECT_TRUE((r.dsts_[0] == DfsOpt::Dst{"h", 6, 6.}));
+}

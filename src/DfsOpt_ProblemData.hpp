@@ -52,7 +52,7 @@ struct InputData {
   std::vector<Player> reqTes_{};
   std::vector<Dst> reqDsts_{};
 
-  bool captainMode_{};
+  bool captainMode_{ false };
 };
 
 struct Roster {
@@ -66,7 +66,7 @@ struct Roster {
   std::vector<Player> flex_{};
   std::vector<Dst> dsts_{};
   
-  bool captainMode{};
+  bool dstIsCaptain_{ false };
 };
 
 struct OutputData {
